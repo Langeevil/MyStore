@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layouts/base :: head(~{::title})}">
+    <title th:fragment="title">Nova Categoria</title>
+</head>
+<body>
+<main th:replace="~{_layouts/base :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div style="min-height: 600px" class="p-3">
+            <h1 class="text-primary">Nova Categoria</h1>
+            <hr>
+            <form th:action="@{/categories}" method="post" th:object="${category}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/categories}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
