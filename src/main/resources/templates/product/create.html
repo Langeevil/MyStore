@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<!-- replacing the head with title  -->
+<head th:replace="~{_layouts/base :: head(~{::title})}">
+    <title th:fragment="title">Novo Produto</title>
+</head>
+<body>
+<!-- replacing the main content -->
+<main th:replace="~{_layouts/base :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div style="min-height: 600px" class="p-3">
+            <!-- method post - object name is the same of controller, product!
+                 action directing to endpoint to save      -->
+            <form th:action="@{/products}" th:object="${product}" method="post" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nome</label>
+                    <!--the field is the same name of object attribute  -->
+                    <input type="text" class="form-control" th:field="*{name}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Categoria</label>
+                    <!-- select to show the categories     -->
+                    <select class="form-select" th:field="*{category}" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <!-- iterates over the categories  -->
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"></option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Salvar</button>
+                    <button class="btn btn-secondary" type="reset">Limpar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

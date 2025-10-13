@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<!-- replacing the head with title  -->
+<head th:replace="~{_layouts/base :: head(~{::title})}">
+    <title th:fragment="title">Produtos</title>
+</head>
+<body>
+<!-- replacing the main content -->
+<main th:replace="~{_layouts/base :: layout(~{::content})}">
+    <div th:fragment="content">
+        <div style="min-height: 600px" class="p-3">
+            <h1 class="text-primary">Produtos</h1>
+            <hr>
+            <a th:href="@{/products/create}" class="btn btn-primary">Adicionar Produto</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th colspan="3">Operações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${page.content}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.category.name}"></td>
+
+                    <td>
+                        <button th:onclick="getProductById([[${product.id}]])" type="button" class="btn btn-primary "
+                                data-bs-toggle="modal" data-bs-target="#viewModal">Visualizar
+                        </button>
+                    </td>
+
+
+                    <td><a th:href="${'/products/' + product.id + '/edit'}" class="btn btn-info">Editar</a></td>
+
+                    <td>
+                        <!-- Form to delete - the action direct to endpont to delete, and define the path variable             -->
+                        <form class="delete-form" th:action="@{/products/{id}(id=${product.id})}" method="post">
+                            <!-- hidden method to define the correct HTTP verb - delete.    -->
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" class="btn btn-danger">
+                                Excluir
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <nav th:if="${page.totalPages > 1}" aria-label="Paginação">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/products(page=${page.number - 1}, size=${page.size}, search=${search}, sort=${param.sort})}">
+                            Anterior
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                        th:classappend="${i} == ${page.number} ? 'active'">
+                        <a class="page-link" th:text="${i + 1}"
+                           th:href="@{/products(page=${i}, size=${page.size}, search=${search}, sort=${param.sort})}">
+                            1 </a>
+                    </li>
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/products(page=${page.number + 1}, size=${page.size}, search=${search}, sort=${param.sort})}">
+                            Próxima
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div th:replace="~{_fragments/toast :: toast(${message})}"></div>
+
+            <!-- add the script to modal        -->
+            <script th:src="@{/js/modal.js}"></script>
+
+            <!-- event listener to show the modal before submit        -->
+            <script>
+                document.querySelectorAll('.delete-form').forEach(form => {
+                    form.addEventListener("submit", async (e) => {
+                        e.preventDefault();
+                        const confirm = await showConfirmModal("Confirme", "Deseja excluir esse produto?");
+                        if(confirm){
+                            form.submit();
+                        }
+                    })
+                })
+            </script>
+
+            <script>
+                <!--  create an asynchronous function   -->
+                async function getProductById(id) {
+                    <!-- perform the request   -->
+                    const response = await fetch(`/products/${id}/show`)
+                    <!-- verifies the response status        -->
+                    if(!response.ok){
+                        alert(`Erro: HTTP ${response.status}`);
+                    } else {
+                         <!-- get the product, converts to json and set the HTML values             -->
+                         const product = await response.json();
+                         document.getElementById("productName").innerHTML = product.name
+                         document.getElementById("productCategory").innerHTML = product.category.name
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- Modal to show -->
+        <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewModalLabel">Exibir Produto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <p id="productName"></p>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <p id="productCategory"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</main>
+</body>
+</html>

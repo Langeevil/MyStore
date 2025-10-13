@@ -1,0 +1,17 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: MyStore
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mystore?serverTimeZone=America/São_Paulo
+    username: maven
+    password: maven123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mvc:
+    hidden method:
+      filter:
+        enabled: true
