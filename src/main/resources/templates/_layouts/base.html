@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <!--creates a fragment named 'head' that
     receives a parameter 'title' -->
 <head th:fragment="head(title)">
@@ -23,6 +24,19 @@
             <li class="nav-item"><a class="nav-link" th:href="@{/}">Início</a></li>
             <li><a class="nav-link" th:href="@{/products}">Produtos</a></li>
             <li><a class="nav-link" th:href="@{/categories}">Categorias</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            <li sec:authorize="isAuthenticated()">
+                <span sec:authentication="name"></span>
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-warning">Sair</button>
+                </form>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a class="btn btn-primary" th:href="@{/login}">
+                    Entrar
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- the specific content goes here!   -->

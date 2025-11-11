@@ -9,7 +9,21 @@
 <main th:replace="~{_layouts/base :: layout(~{::content})}">
     <div th:fragment="content" class="p-3">
         <div class="d-flex justify-content-center align-items-center" style="min-height: 600px">
-            <div>
+            <div sec:authorize="isAuthenticated()"><p><strong>Usuário logado:</strong> <span
+                    sec:authentication="name"></span></p>
+                <p><strong>Roles:</strong>
+                    <span sec:authentication="principal.authorities">
+
+                </span>
+                </p>
+                <p><strong>Objeto completo:</strong>
+                    <span sec:authentication="principal">
+
+                </span>
+                </p>
+            </div>
+
+            <div sec:authorize="hasRole(‘ROLE_ADMIN')">
                 <img th:src="@{/img/spring-logo.png}" style="width: 480px" class="p-2" />
                 <h2 class="text-center">Bem vindos!</h2>
             </div>
